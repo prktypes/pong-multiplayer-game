@@ -35,7 +35,8 @@ io.on('connection', (socket) => {
   // Send a private welcome message to THIS socket only
   socket.emit('welcome', {
     message: 'Connected to Pong server!',
-    yourId: socket.id
+    yourId: socket.id,
+    totalPlayers: connectedPlayers
   });
 
   // Tell EVERYONE ELSE (not the newcomer) that someone joined
