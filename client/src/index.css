@@ -2,6 +2,10 @@ body {
   font-family: "Press Start 2P", sans-serif;
   background-color: black;
 }
+.test {
+  font-size: 2rem;
+  color: white;
+}
 .header {
   font-size: 3rem;
   text-align: center;
