@@ -24,7 +24,7 @@ function registerRoomHandlers(io, socket) {
       playerNumber: 1
     });
 
-    console.log(`🏠 Room created: ${code} by ${socket.id.slice(0, 6)}`);
+    console.log(`Room created: ${code} by ${socket.id.slice(0, 6)}`);
     roomManager.logRooms();
   });
 

@@ -56,7 +56,6 @@ class RoomManager {
     }
     return null;
   }
-
   removePlayer(socketId) {
     const room = this.getRoomBySocketId(socketId);
     if (!room) return null;

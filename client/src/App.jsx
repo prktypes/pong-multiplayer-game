@@ -3,6 +3,8 @@ import socket from './socket';
 import Header from './components/Header';
 import MessageFeed from './components/MessageFeed';
 import InputRow from './components/InputRow';
+import Lobby from './components/Lobby';
+import WaitingRoom from './components/WaitingRoom';
 import './index.css';
 
 export default function App() {
