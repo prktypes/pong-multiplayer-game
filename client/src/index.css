@@ -362,3 +362,103 @@ input:focus {
   color: #333;
   letter-spacing: 2px;
 }
+
+/* ════════════════════════════════════════════════════════════
+   PHASE 3 — Game screen
+   ════════════════════════════════════════════════════════════ */
+
+.game-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: #0d0d0d;
+  gap: 0;
+}
+
+/* ── Scoreboard ───────────────────────────────────────────── */
+.scoreboard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 800px;
+  padding: 16px 24px;
+  background: #111;
+  border-bottom: 1px solid #1a1a1a;
+}
+.score-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.4;
+  transition: opacity 0.3s;
+}
+.score-side.me {
+  opacity: 1;
+}
+.score-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #666;
+}
+.score-number {
+  font-size: 36px;
+  color: #fff;
+}
+.score-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.score-room {
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: #333;
+}
+
+/* ── Canvas ───────────────────────────────────────────────── */
+.game-canvas {
+  display: block;
+  border-left: 1px solid #1a1a1a;
+  border-right: 1px solid #1a1a1a;
+}
+
+/* ── Ready screen start button ────────────────────────────── */
+.ready-btn {
+  margin-top: 16px;
+  width: 200px;
+  padding: 16px;
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+/* ── Game Over overlay ────────────────────────────────────── */
+.gameover {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  background: rgba(0, 0, 0, 0.85);
+}
+.gameover-title {
+  font-size: 28px;
+  letter-spacing: 4px;
+}
+.gameover-title.win  { color: #2ecc71; }
+.gameover-title.lose { color: #e74c3c; }
+.gameover-scores {
+  font-size: 20px;
+  color: #888;
+  letter-spacing: 8px;
+}
+.gameover .btn-primary {
+  width: 200px;
+  font-size: 10px;
+  letter-spacing: 2px;
+}

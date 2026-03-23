@@ -1,0 +1,14 @@
+const C = {
+  CANVAS_WIDTH:   800,
+  CANVAS_HEIGHT:  500,
+  PADDLE_WIDTH:   12,
+  PADDLE_HEIGHT:  80,
+  PADDLE_SPEED:   6,
+  PADDLE_OFFSET:  20,
+  BALL_SIZE:      10,
+  BALL_SPEED:     5,
+  BALL_MAX_SPEED: 12,
+  WINNING_SCORE:  5,
+};
+
+export default C;

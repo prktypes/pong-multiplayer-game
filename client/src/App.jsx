@@ -1,56 +1,82 @@
 import { useState, useEffect } from 'react';
 import socket from './socket';
-import Lobby from './components/Lobby';
+import Lobby       from './components/Lobby';
 import WaitingRoom from './components/WaitingRoom';
+import Scoreboard  from './components/Scoreboard';
+import GameCanvas  from './components/GameCanvas';
+import GameOver    from './components/GameOver';
+import useGameInput from './hooks/useGameInput';
 import './index.css';
 
 export default function App() {
-  const [gameState, setGameState]     = useState('idle');
-  const [roomCode, setRoomCode]       = useState('');
+  const [gameState,    setGameState]    = useState('idle');
+  const [roomCode,     setRoomCode]     = useState('');
   const [playerNumber, setPlayerNumber] = useState(null);
-  const [roomError, setRoomError]     = useState('');
+  const [roomError,    setRoomError]    = useState('');
+  const [pongState,    setPongState]    = useState(null);
+  const [scores,       setScores]       = useState({ 1: 0, 2: 0 });
+  const [winner,       setWinner]       = useState(null);
 
-  // ── Socket events ─────────────────────────────────────────────
+  // Activate keyboard input only while playing
+  useGameInput(gameState === 'playing');
+
   useEffect(() => {
-
     socket.on('roomCreated', (data) => {
       setRoomCode(data.roomCode);
       setPlayerNumber(data.playerNumber);
-      setRoomError('');
       setGameState('waiting');
+      setRoomError('');
     });
 
     socket.on('roomJoined', (data) => {
       setRoomCode(data.roomCode);
       setPlayerNumber(data.playerNumber);
-      setRoomError('');
       setGameState('waiting');
+      setRoomError('');
     });
 
-    socket.on('roomReady', (data) => {
-      console.log('Room ready! Players:', data.players);
+    socket.on('roomReady', () => {
       setGameState('ready');
     });
 
     socket.on('joinError', (data) => {
-      setRoomError(data.error);
+      setRoomError(data.message);
     });
 
     socket.on('opponentLeft', (data) => {
       setGameState('waiting');
+      setPongState(null);
       setRoomError(data.message);
+    });
+
+    // Game events
+    socket.on('gameState', (state) => {
+      setPongState(state);
+      setScores(state.scores);
+    });
+
+    socket.on('scored', (data) => {
+      setScores(data.scores);
+    });
+
+    socket.on('gameOver', (data) => {
+      setWinner(data.winner);
+      setScores(data.scores);
+      setGameState('gameover');
     });
 
     return () => {
       socket.off('roomCreated');
       socket.off('roomJoined');
       socket.off('roomReady');
-      socket.off('roomError');
+      socket.off('joinError');
       socket.off('opponentLeft');
+      socket.off('gameState');
+      socket.off('scored');
+      socket.off('gameOver');
     };
   }, []);
 
-  // ── Handlers ──────────────────────────────────────────────────
   function handleCreateRoom() {
     setRoomError('');
     socket.emit('createRoom');
@@ -66,7 +92,22 @@ export default function App() {
     setGameState('idle');
     setRoomCode('');
     setPlayerNumber(null);
+    setPongState(null);
+    setScores({ 1: 0, 2: 0 });
     setRoomError('');
+  }
+
+  function handleStartGame() {
+    socket.emit('startGame');
+    setGameState('playing');
+  }
+
+  function handlePlayAgain() {
+    setWinner(null);
+    setPongState(null);
+    setScores({ 1: 0, 2: 0 });
+    socket.emit('startGame');
+    setGameState('playing');
   }
 
   // ── Screens ───────────────────────────────────────────────────
@@ -82,9 +123,29 @@ export default function App() {
     return (
       <div className="ready-screen">
         <div className="ready-title">⚡ Game Ready!</div>
-        <div className="ready-info">Room: <span className="highlight">{roomCode}</span></div>
-        <div className="ready-info">You are <span className="highlight">Player {playerNumber}</span></div>
-        <div className="ready-sub">Phase 3: Game coming soon...</div>
+        <div className="ready-info">
+          You are <span className="highlight">Player {playerNumber}</span>
+        </div>
+        <button className="btn-primary ready-btn" onClick={handleStartGame}>
+          Start Game
+        </button>
+      </div>
+    );
+  }
+
+  if (gameState === 'playing' || gameState === 'gameover') {
+    return (
+      <div className="game-screen">
+        <Scoreboard scores={scores} playerNumber={playerNumber} roomCode={roomCode} />
+        <GameCanvas gameState={pongState} playerNumber={playerNumber} />
+        {gameState === 'gameover' && (
+          <GameOver
+            winner={winner}
+            scores={scores}
+            playerNumber={playerNumber}
+            onPlayAgain={handlePlayAgain}
+          />
+        )}
       </div>
     );
   }
