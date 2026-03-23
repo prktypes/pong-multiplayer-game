@@ -29,7 +29,24 @@ function registerRoomHandlers(io, socket) {
   });
 
   // ── JOIN ROOM ────────────────────────────────────────────────
-  socket.on('joinRoom', ({ roomCode }) => {
+  // Accept either a string payload (room code) or an object { roomCode }
+  socket.on('joinRoom', (payload) => {
+    // Normalize payload to a string roomCode when possible
+    let roomCode;
+    if (typeof payload === 'string') {
+      roomCode = payload;
+    } else if (payload && typeof payload.roomCode === 'string') {
+      roomCode = payload.roomCode;
+    } else if (payload && typeof payload.code === 'string') {
+      // support alternative key name
+      roomCode = payload.code;
+    }
+
+    if (!roomCode) {
+      socket.emit('joinError', { message: 'No room code provided' });
+      return;
+    }
+
     const code = roomCode.toUpperCase().trim();
     const result = roomManager.joinRoom(code, socket.id);
 

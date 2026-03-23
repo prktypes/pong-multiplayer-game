@@ -1,16 +1,7 @@
-body {
-  font-family: "Press Start 2P", sans-serif;
-  background-color: black;
-}
-.test {
-  font-size: 2rem;
-  color: white;
-}
-.header {
-  font-size: 3rem;
-  text-align: center;
-  color: white;
-}
+/* ── Google Font ──────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* ── Reset & Base ─────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -21,6 +12,15 @@ html, body, #root {
   height: 100%;
   width: 100%;
 }
+
+body {
+  background-color: #0d0d0d;
+  color: #ffffff;
+  font-family: 'Press Start 2P', monospace;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -32,7 +32,7 @@ html, body, #root {
   border-radius: 3px;
 }
 
-/* ── Buttons ──────────────────────────────────────────────── */
+/* ── Buttons (global) ─────────────────────────────────────── */
 button {
   cursor: pointer;
   font-family: inherit;
@@ -42,7 +42,7 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* ── Inputs ───────────────────────────────────────────────── */
+/* ── Inputs (global) ──────────────────────────────────────── */
 input {
   font-family: inherit;
   outline: none;
@@ -51,9 +51,10 @@ input:focus {
   border-color: #3498db !important;
 }
 
-/* FOR APP.CSS CONTENT*/
+/* ════════════════════════════════════════════════════════════
+   PHASE 1 — Chat layout
+   ════════════════════════════════════════════════════════════ */
 
-/* ── Layout ───────────────────────────────────────────────── */
 .app {
   display: flex;
   flex-direction: column;
@@ -64,27 +65,28 @@ input:focus {
 }
 
 /* ── Header ───────────────────────────────────────────────── */
-.header {
+.app-header {
   padding: 16px 20px;
   background: #111;
   border-bottom: 1px solid #2c2c2c;
 }
-.header h2 {
-  font-size: 16px;
+.app-header h2 {
+  font-size: 12px;
   letter-spacing: 1px;
 }
 .status-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 6px;
-  font-size: 13px;
+  margin-top: 8px;
+  font-size: 10px;
   color: #aaa;
 }
 .dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 .dot.connected    { background: #2ecc71; }
 .dot.disconnected { background: #e74c3c; }
@@ -92,12 +94,12 @@ input:focus {
   background: #2c2c2c;
   padding: 2px 10px;
   border-radius: 20px;
-  font-size: 11px;
+  font-size: 9px;
   color: #888;
 }
 .my-id {
-  margin-top: 4px;
-  font-size: 11px;
+  margin-top: 6px;
+  font-size: 9px;
   color: #3498db;
 }
 
@@ -112,30 +114,30 @@ input:focus {
 }
 .system-msg {
   text-align: center;
-  font-size: 11px;
+  font-size: 9px;
   color: #555;
-  padding: 2px 0;
+  padding: 4px 0;
 }
 .chat-msg {
   display: flex;
   flex-direction: column;
   max-width: 75%;
 }
-.chat-msg.mine  { align-self: flex-end; }
+.chat-msg.mine   { align-self: flex-end; }
 .chat-msg.theirs { align-self: flex-start; }
 .msg-meta {
-  font-size: 10px;
+  font-size: 8px;
   color: #666;
-  margin-bottom: 3px;
+  margin-bottom: 4px;
 }
 .msg-bubble {
   padding: 8px 12px;
   border-radius: 8px;
-  font-size: 14px;
-  line-height: 1.4;
+  font-size: 11px;
+  line-height: 1.8;
 }
-.chat-msg.mine   .msg-bubble { background: #3498db; }
-.chat-msg.theirs .msg-bubble { background: #3498db; }
+.chat-msg.mine   .msg-bubble { background: #1d4e8f; }
+.chat-msg.theirs .msg-bubble { background: #2c2c2c; }
 
 /* ── Input Row ────────────────────────────────────────────── */
 .input-row {
@@ -152,7 +154,7 @@ input:focus {
   border: 1px solid #3a3a3a;
   border-radius: 6px;
   color: #fff;
-  font-size: 14px;
+  font-size: 10px;
 }
 .input-row button {
   padding: 10px 20px;
@@ -160,9 +162,203 @@ input:focus {
   color: #fff;
   border: none;
   border-radius: 6px;
-  font-size: 14px;
+  font-size: 10px;
   transition: background 0.2s;
 }
 .input-row button:hover:not(:disabled) {
   background: #2980b9;
+}
+
+/* ════════════════════════════════════════════════════════════
+   PHASE 2 — Lobby & Room screens
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Shared button styles ─────────────────────────────────── */
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  transition: background 0.2s;
+}
+.btn-primary:hover:not(:disabled) { background: #ddd; }
+
+.btn-secondary {
+  padding: 12px 20px;
+  background: transparent;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 6px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  transition: border-color 0.2s;
+}
+.btn-secondary:hover:not(:disabled) { border-color: #fff; }
+
+.btn-ghost {
+  padding: 10px 24px;
+  background: transparent;
+  color: #555;
+  border: 1px solid #2c2c2c;
+  border-radius: 6px;
+  font-size: 9px;
+  letter-spacing: 1px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.btn-ghost:hover:not(:disabled) {
+  color: #fff;
+  border-color: #555;
+}
+
+/* ── Lobby ────────────────────────────────────────────────── */
+.lobby {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 8px;
+  background: #0d0d0d;
+}
+.lobby-title {
+  font-size: 40px;
+  letter-spacing: 12px;
+  color: #fff;
+}
+.lobby-subtitle {
+  font-size: 10px;
+  letter-spacing: 6px;
+  color: #444;
+  margin-bottom: 40px;
+}
+.lobby-card {
+  background: #111;
+  border: 1px solid #2c2c2c;
+  border-radius: 12px;
+  padding: 32px;
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+.lobby-divider {
+  color: #444;
+  font-size: 9px;
+  letter-spacing: 4px;
+}
+.join-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+.code-input {
+  flex: 1;
+  padding: 12px;
+  background: #0d0d0d;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 16px;
+  letter-spacing: 8px;
+  text-align: center;
+  text-transform: uppercase;
+}
+.error-msg {
+  color: #e74c3c;
+  font-size: 9px;
+  text-align: center;
+  line-height: 1.8;
+}
+
+/* ── Waiting Room ─────────────────────────────────────────── */
+.waiting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 28px;
+  background: #0d0d0d;
+}
+.waiting-title {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #666;
+}
+.room-code-box {
+  text-align: center;
+  background: #111;
+  border: 1px solid #2c2c2c;
+  border-radius: 12px;
+  padding: 28px 52px;
+}
+.room-code-label {
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: #444;
+  margin-bottom: 12px;
+}
+.room-code {
+  font-size: 48px;
+  letter-spacing: 14px;
+  color: #fff;
+}
+.waiting-info {
+  font-size: 10px;
+  color: #555;
+  letter-spacing: 1px;
+}
+.highlight { color: #3498db; }
+
+/* ── Waiting dots animation ───────────────────────────────── */
+.waiting-dots {
+  display: flex;
+  gap: 10px;
+}
+.waiting-dots span {
+  width: 8px;
+  height: 8px;
+  background: #2c2c2c;
+  border-radius: 50%;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.waiting-dots span:nth-child(2) { animation-delay: 0.2s; }
+.waiting-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes pulse {
+  0%, 100% { background: #2c2c2c; }
+  50%       { background: #3498db; }
+}
+
+/* ── Ready Screen ─────────────────────────────────────────── */
+.ready-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 20px;
+  background: #0d0d0d;
+}
+.ready-title {
+  font-size: 24px;
+  letter-spacing: 4px;
+  color: #2ecc71;
+}
+.ready-info {
+  font-size: 11px;
+  color: #666;
+  letter-spacing: 1px;
+}
+.ready-sub {
+  margin-top: 20px;
+  font-size: 9px;
+  color: #333;
+  letter-spacing: 2px;
 }

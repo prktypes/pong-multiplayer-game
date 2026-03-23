@@ -1,75 +1,91 @@
 import { useState, useEffect } from 'react';
 import socket from './socket';
-import Header from './components/Header';
-import MessageFeed from './components/MessageFeed';
-import InputRow from './components/InputRow';
 import Lobby from './components/Lobby';
 import WaitingRoom from './components/WaitingRoom';
 import './index.css';
 
 export default function App() {
-  const [isConnected, setIsConnected] = useState(false);
-  const [myId, setMyId]               = useState('');
-  const [messages, setMessages]       = useState([]);
-  const [playerCount, setPlayerCount] = useState(0);
+  const [gameState, setGameState]     = useState('idle');
+  const [roomCode, setRoomCode]       = useState('');
+  const [playerNumber, setPlayerNumber] = useState(null);
+  const [roomError, setRoomError]     = useState('');
 
-  function addSystemMessage(text) {
-    setMessages(prev => [...prev, { type: 'system', text }]);
-  }
-
-  function handleSend(text) {
-    socket.emit('message', { text });
-  }
-
+  // ── Socket events ─────────────────────────────────────────────
   useEffect(() => {
-    socket.on('connect', () => setIsConnected(true));
 
-    socket.on('welcome', (data) => {
-      setMyId(data.yourId);
-      setPlayerCount(data.totalPlayers);
-      addSystemMessage(`You joined! Your ID: ${data.yourId}`);
+    socket.on('roomCreated', (data) => {
+      setRoomCode(data.roomCode);
+      setPlayerNumber(data.playerNumber);
+      setRoomError('');
+      setGameState('waiting');
     });
 
-    socket.on('playerJoined', (data) => {
-      setPlayerCount(prev => prev + 1);
-      addSystemMessage(`${data.playerId.slice(0, 6)}... joined`);
+    socket.on('roomJoined', (data) => {
+      setRoomCode(data.roomCode);
+      setPlayerNumber(data.playerNumber);
+      setRoomError('');
+      setGameState('waiting');
     });
 
-    socket.on('playerLeft', (data) => {
-      setPlayerCount(prev => prev - 1);
-      addSystemMessage(`${data.playerId.slice(0, 6)}... left`);
+    socket.on('roomReady', (data) => {
+      console.log('Room ready! Players:', data.players);
+      setGameState('ready');
     });
 
-    socket.on('message', (data) => {
-      setMessages(prev => [...prev, {
-        type: 'chat',
-        from: data.from,
-        text: data.text,
-        time: new Date(data.timestamp).toLocaleTimeString(),
-        isMe: data.from === socket.id
-      }]);
+    socket.on('joinError', (data) => {
+      setRoomError(data.error);
     });
 
-    socket.on('disconnect', (reason) => {
-      setIsConnected(false);
-      addSystemMessage(`Disconnected: ${reason}`);
+    socket.on('opponentLeft', (data) => {
+      setGameState('waiting');
+      setRoomError(data.message);
     });
 
     return () => {
-      socket.off('connect');
-      socket.off('welcome');
-      socket.off('playerJoined');
-      socket.off('playerLeft');
-      socket.off('message');
-      socket.off('disconnect');
+      socket.off('roomCreated');
+      socket.off('roomJoined');
+      socket.off('roomReady');
+      socket.off('roomError');
+      socket.off('opponentLeft');
     };
   }, []);
 
-  return (
-    <div className="app">
-      <Header isConnected={isConnected} playerCount={playerCount} myId={myId} />
-      <MessageFeed messages={messages} />
-      <InputRow onSend={handleSend} disabled={!isConnected} />
-    </div>
-  );
+  // ── Handlers ──────────────────────────────────────────────────
+  function handleCreateRoom() {
+    setRoomError('');
+    socket.emit('createRoom');
+  }
+
+  function handleJoinRoom(code) {
+    setRoomError('');
+    socket.emit('joinRoom', { code });
+  }
+
+  function handleLeaveRoom() {
+    socket.emit('leaveRoom');
+    setGameState('idle');
+    setRoomCode('');
+    setPlayerNumber(null);
+    setRoomError('');
+  }
+
+  // ── Screens ───────────────────────────────────────────────────
+  if (gameState === 'idle') {
+    return <Lobby onCreateRoom={handleCreateRoom} onJoinRoom={handleJoinRoom} error={roomError} />;
+  }
+
+  if (gameState === 'waiting') {
+    return <WaitingRoom roomCode={roomCode} playerNumber={playerNumber} onLeave={handleLeaveRoom} />;
+  }
+
+  if (gameState === 'ready') {
+    return (
+      <div className="ready-screen">
+        <div className="ready-title">⚡ Game Ready!</div>
+        <div className="ready-info">Room: <span className="highlight">{roomCode}</span></div>
+        <div className="ready-info">You are <span className="highlight">Player {playerNumber}</span></div>
+        <div className="ready-sub">Phase 3: Game coming soon...</div>
+      </div>
+    );
+  }
 }

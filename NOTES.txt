@@ -1,0 +1,53 @@
+Phase 1: WebSocket Backend — The Foundation -(everyone in one global chatroom)
+
+Step 1: What are we building first?
+Before writing any code, understand what Phase 1 backend does:
+Browser connects → Server says "welcome"
+Browser sends message → Server broadcasts to ALL connected browsers
+Browser disconnects → Server logs it
+That's it. Simple. But this is the exact same pattern your game will use — just with "paddleMoved" instead of "message".
+
+This is the flow of the game in Phase 3 - the real-time gameplay phase:
+
+-----------------------------------------------------------------------------------------------------
+
+Phase 2: two players in a room, staring at "Game Ready"
+Phase 2: players create a private room with a code
+         only 2 players per room
+         both players see "Game Ready" when room is full
+
+socket.join('ABCD')   // puts this socket into room 'ABCD'
+io.to('ABCD').emit()  // sends ONLY to sockets in room 'ABCD'
+
+{
+  'ABCD': {
+    code: 'ABCD',
+    players: [
+      { id: 'socket1', name: 'Player 1' },
+      { id: 'socket2', name: 'Player 2' }
+    ],
+    status: 'waiting'   // 'waiting' | 'ready' | 'playing' | 'finished'
+  }
+}
+
+We store this in a plain JavaScript Map. Not MongoDB — rooms are temporary. 
+They die when both players leave. MongoDB is only for final scores later.
+
+--------------------------------------------------------------------------------------------------------
+
+Phase 3: actual Pong — paddles, ball, score, win condition
+
+New concepts:
+  → HTML5 Canvas   — drawing the game visually
+  → Game Loop      — server ticks 60x per second
+  → Physics        — ball movement, wall bounce, paddle bounce
+  → Input handling — keypress → server → both screens update
+
+*IMPORTANT*
+Player 1 presses W
+  → frontend emits 'paddleMove' to server
+  → server updates paddle position in room state
+  → server's game loop runs every 16ms
+  → loop calculates new ball position, checks collisions
+  → server emits 'gameState' to BOTH players in room
+  → both frontends redraw the canvas with new positions
