@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useRef } from 'react';
 import socket from './socket';
 import Lobby       from './components/Lobby';
 import WaitingRoom from './components/WaitingRoom';
@@ -13,9 +13,9 @@ export default function App() {
   const [roomCode,     setRoomCode]     = useState('');
   const [playerNumber, setPlayerNumber] = useState(null);
   const [roomError,    setRoomError]    = useState('');
-  const [pongState,    setPongState]    = useState(null);
   const [scores,       setScores]       = useState({ 1: 0, 2: 0 });
   const [winner,       setWinner]       = useState(null);
+  const pongStateRef = useRef(null); // Store latest game state for input handling - avoids rerendering of the canvas which overrides the keystrokes
 
   // Activate keyboard input only while playing
   useGameInput(gameState === 'playing');
@@ -51,8 +51,7 @@ export default function App() {
 
     // Game events
     socket.on('gameState', (state) => {
-      setPongState(state);
-      setScores(state.scores);
+      pongStateRef.current = state; // Update ref with latest state for input handling -> no rerender triggered
     });
 
     socket.on('scored', (data) => {
@@ -137,7 +136,7 @@ export default function App() {
     return (
       <div className="game-screen">
         <Scoreboard scores={scores} playerNumber={playerNumber} roomCode={roomCode} />
-        <GameCanvas gameState={pongState} playerNumber={playerNumber} />
+        <GameCanvas pongStateRef={pongStateRef} playerNumber={playerNumber} />
         {gameState === 'gameover' && (
           <GameOver
             winner={winner}
