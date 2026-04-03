@@ -1,10 +1,12 @@
 import { io } from 'socket.io-client';
 
-// Connect once, reuse everywhere
-// Without this, every component that imports socket
-// would create a NEW connection — that's a bug
-const socket = io('http://localhost:3001', {
-  autoConnect: true   // connects immediately on import
+const URL = import.meta.env.PROD
+  ? import.meta.env.VITE_SERVER_URL   // ← from .env on Vercel
+  : 'http://localhost:3001';
+
+const socket = io(URL, {
+  autoConnect: true,
+  transports: ['websocket', 'polling']  // ← always include polling as fallback
 });
 
 export default socket;
