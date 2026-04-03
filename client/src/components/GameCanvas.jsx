@@ -13,6 +13,9 @@ export default function GameCanvas({ pongStateRef, playerNumber }) {
     function drawLoop() {
       const state = pongStateRef.current;
 
+       console.log('pongStateRef has data:', !!state); // ← add this
+  console.log('paddle1 y:', state?.paddles?.[1]?.y); // ← add this
+
       if (!state) {
         drawWaiting(ctx);
       } else {

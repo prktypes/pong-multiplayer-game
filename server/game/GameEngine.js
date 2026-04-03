@@ -112,7 +112,7 @@ function tick(gameState) {
 
 // Move a paddle up or down, clamped to canvas bounds
 function movePaddle(gameState, playerNumber, direction) {
-  const paddle = gameState.paddles[playerNumber];
+  const paddle = gameState.paddles[Number(playerNumber)];
   if (!paddle) return;
 
   if (direction === 'up') {

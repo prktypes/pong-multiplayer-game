@@ -5,8 +5,13 @@ const C = require('../game/constants');
 // Stores active game loops: roomCode → intervalId
 const gameLoops = new Map();
 
-module.exports = function registerGameHandlers(io, socket) {
 
+module.exports = function registerGameHandlers(io, socket) {
+  console.log('gameHandlers registered for:', socket.id.slice(0, 6)); // ← add this
+
+  socket.on('paddleMove', ({ direction }) => {
+    console.log('SERVER GOT paddleMove:', direction);
+  });
   // ── START GAME ─────────────────────────────────────────────
   // Emitted by frontend when roomReady fires
   socket.on('startGame', () => {
@@ -70,7 +75,13 @@ module.exports = function registerGameHandlers(io, socket) {
   // ── PADDLE MOVE ────────────────────────────────────────────
   // Frontend emits this on keydown/keyup
   socket.on('paddleMove', ({ direction }) => {
+    
     const room = roomManager.getRoomBySocketId(socket.id);
+    console.log('SERVER GOT paddleMove:', direction); //just checking if the keystroke is being triggered or not
+    console.log('room:', !!room);                        // ← is room found?
+    console.log('gameState:', !!room?.gameState);        // ← does room have gameState?
+    console.log('loop running:', gameLoops.has(room?.code)); // ← is loop active?
+    
     if (!room || !room.gameState) return;
 
     // Figure out which player number this socket is
@@ -78,6 +89,9 @@ module.exports = function registerGameHandlers(io, socket) {
     if (!player) return;
 
     movePaddle(room.gameState, player.playerNumber, direction);
+    console.log('paddle y after move:', room.gameState.paddles[player.playerNumber].y);
+
+  if (!room || !room.gameState) return;
   });
 
 

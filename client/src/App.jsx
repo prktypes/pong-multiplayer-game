@@ -103,7 +103,7 @@ export default function App() {
 
   function handlePlayAgain() {
     setWinner(null);
-    setPongState(null);
+    pongStateRef.current = null;
     setScores({ 1: 0, 2: 0 });
     socket.emit('startGame');
     setGameState('playing');

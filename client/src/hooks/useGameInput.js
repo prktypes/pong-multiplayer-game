@@ -1,40 +1,28 @@
-//this hook will ensure the clean input of the game using keyboard
-
 import { useEffect } from 'react';
 import socket from '../socket';
 
 export default function useGameInput(isPlaying) {
-
   useEffect(() => {
+    console.log('useGameInput mounted, isPlaying:', isPlaying);
+
     if (!isPlaying) return;
 
-    // Track which keys are held down
-    const keys = new Set();
-
-    // Interval sends paddle direction while key is held
-    const inputLoop = setInterval(() => {
-      if (keys.has('w') || keys.has('arrowup')) {
+    function onKeyDown(e) {
+      console.log('KEY PRESSED:', e.key); // ← do you see this?
+      if (e.key === 'w' || e.key === 'ArrowUp') {
         socket.emit('paddleMove', { direction: 'up' });
       }
-      if (keys.has('s') || keys.has('arrowdown')) {
+      if (e.key === 's' || e.key === 'ArrowDown') {
         socket.emit('paddleMove', { direction: 'down' });
       }
-    }, 16); // same rate as game tick
-
-    function onKeyDown(e) {
-      keys.add(e.key.toLowerCase());
-    }
-    function onKeyUp(e) {
-      keys.delete(e.key.toLowerCase());
     }
 
     window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('keyup',   onKeyUp);
+    console.log('keydown listener added'); // ← do you see this?
 
     return () => {
-      clearInterval(inputLoop);
       window.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('keyup',   onKeyUp);
+      console.log('keydown listener removed'); // ← does this fire repeatedly?
     };
 
   }, [isPlaying]);
