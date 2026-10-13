@@ -1,27 +1,22 @@
-# 🏓 Pong Multiplayer
+# Pong Multiplayer
 
-A real-time multiplayer Pong game built with **WebSockets**, **React**, and **Node.js**. Two players connect via room codes, compete on a shared canvas, and the first to 5 points wins.
-
-![Pong Demo](https://img.shields.io/badge/Phase-3%20Complete-brightgreen.svg)
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Nodes](https://img.shields.io/badge/Node.js-v20.15%2B-green.svg)
-![React](https://img.shields.io/badge/React-v18-blue.svg)
+A real-time multiplayer Pong game built with WebSockets, React, and Node.js. Two players connect via room codes, compete on a shared canvas, and the first to 5 points wins.
 
 ---
 
-## 🎮 Quick Overview
+## Quick Overview
 
 Play Pong with a friend! Create a room, share the 4-letter code, and join from another browser window. Use **W/S** or **Arrow keys** to move your paddle. The ball physics are synchronized in real-time across both players via Socket.IO.
 
-- **Room-based matchmaking** — 4-letter codes (e.g., `ABCD`)
-- **60 FPS synchronized gameplay** — Server ticks every 16ms
-- **Physics engine** — Ball movement, wall bounces, paddle collisions, scoring
-- **State machine** — idle → waiting → ready → playing → gameover
-- **No database required** — In-memory room storage for fast, temporary matches
+- Room-based matchmaking — 4-letter codes (e.g., `ABCD`)
+- 60 FPS synchronized gameplay — Server ticks every 16ms
+- Physics engine — Ball movement, wall bounces, paddle collisions, scoring
+- State machine — idle → waiting → ready → playing → gameover
+- No database required — In-memory room storage for fast, temporary matches
 
 ---
 
-## 🚀 Live Demo
+## Live Demo
 
 1. Open **Browser 1** at `http://localhost:5174`
 2. Click **"Create Room"** — copy the code (e.g., `XPQZ`)
@@ -31,7 +26,7 @@ Play Pong with a friend! Create a room, share the 4-letter code, and join from a
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Layer | Technology |
 |-------|------------|
@@ -42,7 +37,7 @@ Play Pong with a friend! Create a room, share the 4-letter code, and join from a
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 pong/
@@ -78,12 +73,12 @@ pong/
 │
 ├── ARCHITECTURE.md          # Detailed architecture & data flow guide
 ├── PROJECT_DOCUMENTATION.md # Complete project overview
-└── README.md                # ← This file
+└── README.md                # This file
 ```
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ### Three-Layer System
 
@@ -158,7 +153,7 @@ Player sees updated paddle & ball on screen
 
 ---
 
-## 🎯 Core Gameplay Loop
+## Core Gameplay Loop
 
 ### Server-Side (Every 16ms / ~60 FPS)
 
@@ -193,7 +188,7 @@ React listens for `gameState` events and re-renders the canvas ~60x/sec.
 
 ---
 
-## 📡 Socket Events Reference
+## Socket Events Reference
 
 | Event | Direction | Payload | Purpose |
 |-------|-----------|---------|---------|
@@ -212,7 +207,7 @@ React listens for `gameState` events and re-renders the canvas ~60x/sec.
 
 ---
 
-## 🚀 Development & Running
+## Development & Running
 
 ### Prerequisites
 
@@ -246,8 +241,8 @@ node index.js
 ```bash
 cd client
 npm run dev
-# Output: ✔ Vite v7.x ready in ~xxx ms
-#         ➜ Local:   http://localhost:5174/
+# Output: Vite v7.x ready in ~xxx ms
+#         Local:   http://localhost:5174/
 ```
 
 ### How to Play
@@ -262,7 +257,7 @@ npm run dev
 
 ---
 
-## 🔧 Available Scripts
+## Available Scripts
 
 ### Client (`client/package.json`)
 
@@ -281,7 +276,7 @@ npm run dev
 
 ---
 
-## 🎮 Controls
+## Controls
 
 | Key | Action |
 |-----|--------|
@@ -292,25 +287,25 @@ npm run dev
 
 ---
 
-## 📦 License
+## License
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details (or create one if you don't have it yet).
 
 ---
 
-## 🔄 Next Phase Ideas
+## Next Phase Ideas
 
-- ✅ User accounts & persistent profiles
-- ✅ Database (MongoDB) for room/leaderboard persistence
-- ✅ Matchmaking queue (auto-pair waiting players)
-- ✅ Replay system (record & playback matches)
-- ✅ Sound effects (bounce, score, game over)
-- ✅ Mobile touch controls
-- ✅ Customizable paddles & colors
-- ✅ Admin panel (monitor active games)
+- User accounts & persistent profiles
+- Database (MongoDB) for room/leaderboard persistence
+- Matchmaking queue (auto-pair waiting players)
+- Replay system (record & playback matches)
+- Sound effects (bounce, score, game over)
+- Mobile touch controls
+- Customizable paddles & colors
+- Admin panel (monitor active games)
 
 ---
 
-**Built with ❤️ using Node.js, React, Vite, and Socket.IO**
+**Built with Node.js, React, Vite, and Socket.IO**
 
 *For more details, see [ARCHITECTURE.md](./ARCHITECTURE.md) and [PROJECT_DOCUMENTATION.md](./PROJECT_DOCUMENTATION.md).*
